@@ -99,6 +99,7 @@ public class JPhotoFrame extends JFrame
     protected File photoDirectory = null;
     
     protected static HashMap allFrames = new HashMap();
+    public int interval = 0;
 
     protected JPhotoFrame() throws Exception {
         // Do nothing... needed for inheritance !
@@ -207,7 +208,7 @@ public class JPhotoFrame extends JFrame
         frame = this;
         setFrameIcon();
         allFrames.put(frameName, this);
-        setVisible(true);
+//        setVisible(true);
 
         Object[] options = {
                 "Open Existing Album",
@@ -256,7 +257,7 @@ public class JPhotoFrame extends JFrame
         setTitle();
     }
 
-    private boolean executeCommand(ActionEvent event) {
+    public boolean executeCommand(ActionEvent event) {
         String cmd = event.getActionCommand();
         if (cmd.equals(JPhotoMenu.A_NEW) || cmd.equals(JPhotoMenu.A_OPEN)) {
             if (confirmedSave()!= JOptionPane.CANCEL_OPTION) {
@@ -586,13 +587,13 @@ public class JPhotoFrame extends JFrame
             showExif();
         }
         else if (cmd.equals(JPhotoMenu.A_SLIDESHOW)) {
-            if (photos.getSize()>0) {
-                JPhotoShow show = new JPhotoShow(photos, 5000, list);
-                show.setVisible(true);
-            }
-            else
-                JOptionPane.showMessageDialog(this, "No photos to show!",
-                                              APP_NAME, JOptionPane.ERROR_MESSAGE);
+            interval = 5000;
+            showSlideshow(interval);
+
+        }
+        else if (cmd.equals(JPhotoMenu.F_SLIDESHOW)) {
+            interval = 1000;
+            showSlideshow(interval);
 
         }
         else if (cmd.equals(JPhotoMenu.A_HELP)) {
@@ -629,6 +630,16 @@ public class JPhotoFrame extends JFrame
         else
             System.out.println("Not implemented: "+cmd);
         return false;
+    }
+
+    void showSlideshow(int interval) {
+        if (photos.getSize()>0) {
+            JPhotoShow show = new JPhotoShow(photos, interval, list);
+            show.setVisible(true);
+        }
+        else
+            JOptionPane.showMessageDialog(this, "No photos to show!",
+                                          APP_NAME, JOptionPane.ERROR_MESSAGE);
     }
 
     public void insertPhotos(String files[]) {
