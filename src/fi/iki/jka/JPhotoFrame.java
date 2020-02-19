@@ -99,7 +99,7 @@ public class JPhotoFrame extends JFrame
     protected File photoDirectory = null;
     
     protected static HashMap allFrames = new HashMap();
-    
+
     protected JPhotoFrame() throws Exception {
         // Do nothing... needed for inheritance !
     }
@@ -251,9 +251,15 @@ public class JPhotoFrame extends JFrame
     public void actionPerformed(ActionEvent event) {
         saveEdit(); // Just in case...
 
+        if (executeCommand(event)) return;
+
+        setTitle();
+    }
+
+    private boolean executeCommand(ActionEvent event) {
         String cmd = event.getActionCommand();
         if (cmd.equals(JPhotoMenu.A_NEW) || cmd.equals(JPhotoMenu.A_OPEN)) {
-            if (confirmedSave()!=JOptionPane.CANCEL_OPTION) {
+            if (confirmedSave()!= JOptionPane.CANCEL_OPTION) {
                 photos = new JPhotoCollection();
                 list.setPhotoModel(photos);
                 albumFileName = null;
@@ -301,12 +307,12 @@ public class JPhotoFrame extends JFrame
         }
         else if (cmd.equals(JPhotoMenu.A_IMPORT_DIR)
                  || cmd.equals(JPhotoMenu.A_IMPORT)) {
-            
+
             String files[] = null;
             if (cmd.equals(JPhotoMenu.A_IMPORT_DIR)) {
                 String dir = Utils.getDirectory(this, photoDirectory);
                 if (dir!=null) {
-                    String input[] = { dir+File.separator };
+                    String input[] = { dir+ File.separator };
                     files = Utils.expandAllDirectories(input);
                     if (files==null || files.length==0)
                         JOptionPane.showMessageDialog(this, "No photos in "+dir,
@@ -319,22 +325,22 @@ public class JPhotoFrame extends JFrame
                 if (JPhotoBrowser.getDefaultDirectory()!=null)
                     photoDirectory = JPhotoBrowser.getDefaultDirectory();
             }
-            
+
             if (files!=null) {
                 int index = list.getSelectedIndex();
                 if (index<0)
                     index = 0;
                 else
                     index++;
-                
+
                 list.getPhotoModel().addAll(index, files);
                 list.setSelectedIndex(index-1);
-                
+
                 Dimension dim = scrollPane.getViewport().getSize();
                 list.setVisibleBounds(dim);
             }
         }
-        else if (cmd.equals(JPhotoMenu.A_FIND_ORIGINALS)) {           
+        else if (cmd.equals(JPhotoMenu.A_FIND_ORIGINALS)) {
             String files[] = null;
             String dir = Utils.getDirectory(this, photoDirectory);
             if (dir!=null) {
@@ -346,7 +352,7 @@ public class JPhotoFrame extends JFrame
                 else
                     photoDirectory = new File(dir);
             }
-            
+
             if (files!=null) {
                 list.getPhotoModel().findOriginals(files);
             }
@@ -368,7 +374,7 @@ public class JPhotoFrame extends JFrame
                             status = photos.exportHtmlJari1(albumFileName);
                         else if (cmd.equals(JPhotoMenu.A_EXPORT_2))
                             status = photos.exportHtmlJari2(albumFileName);
-                        // else if (cmd.equals(JPhotoMenu.A_EXPORT_3)) 
+                        // else if (cmd.equals(JPhotoMenu.A_EXPORT_3))
                         //    status = photos.exportHtmlTarja(albumFileName);
 
                         if (status==false)
@@ -377,7 +383,7 @@ public class JPhotoFrame extends JFrame
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(this, "Cannot save "+albumFileName,
                                                       APP_NAME, JOptionPane.ERROR_MESSAGE);
-                    }                
+                    }
                 }
             }
         }
@@ -393,7 +399,7 @@ public class JPhotoFrame extends JFrame
                     status = photos.exportTemplateJari2(target);
                 else if (cmd.equals(JPhotoMenu.A_EXPORT_TEMPLATE_INDEX))
                     status = photos.exportTemplateJari3(target);
-                /* else if (cmd.equals(JPhotoMenu.A_EXPORT_TEMPLATE_4)) 
+                /* else if (cmd.equals(JPhotoMenu.A_EXPORT_TEMPLATE_4))
                     status = photos.exportTemplateTarja(target);
                 */
                 if (status==false)
@@ -436,7 +442,7 @@ public class JPhotoFrame extends JFrame
                 String targetFile = askFileName(".jar", FileDialog.SAVE);
                 if (targetFile==null) {
                     JOptionPane.showMessageDialog(this, "File not set");
-                    return;
+                    return true;
                 }
                 boolean status = photos.exportSlideshow(targetFile, 1);
                 if (status==false)
@@ -450,28 +456,28 @@ public class JPhotoFrame extends JFrame
                 String targetFile = askFileName(".jar", FileDialog.SAVE);
                 if (targetFile==null) {
                     JOptionPane.showMessageDialog(this, "File not set");
-                    return;
+                    return true;
                 }
                 boolean status = photos.exportSlideshow(targetFile, 2);
                 if (status==false)
                     JOptionPane.showMessageDialog(this, "Export of slideshow to "+albumFileName+ " failed.",
                                                   APP_NAME, JOptionPane.ERROR_MESSAGE);
             }
-        }        
+        }
         else if (cmd.equals(JPhotoMenu.A_EXPORT_SLIDESHOW_3)) {
             // exports slideshow with max. resolution 1280x1024
             if (askNameAndSave()) {
                 String targetFile = askFileName(".jar", FileDialog.SAVE);
                 if (targetFile==null) {
                     JOptionPane.showMessageDialog(this, "File not set");
-                    return;
+                    return true;
                 }
                 boolean status = photos.exportSlideshow(targetFile, 3);
                 if (status==false)
                     JOptionPane.showMessageDialog(this, "Export of slideshow to "+albumFileName+ " failed.",
                                                   APP_NAME, JOptionPane.ERROR_MESSAGE);
             }
-        }        
+        }
         else if (cmd.equals(JPhotoMenu.A_EXIT)) {
             exitConfirmedSave();
         }
@@ -546,7 +552,7 @@ public class JPhotoFrame extends JFrame
         else if (cmd.equals(JPhotoMenu.A_WATERMARK)) {
             String def = photos.getWatermark();
             if (def.equals(""))
-                def = "© "+Calendar.getInstance().get(Calendar.YEAR)+" ";
+                def = "ï¿½ "+ Calendar.getInstance().get(Calendar.YEAR)+" ";
             String res = JOptionPane.showInputDialog(this, "Watermark",
                                                      def);
             if (res!=null)
@@ -574,7 +580,7 @@ public class JPhotoFrame extends JFrame
         }
         else if (cmd.equals(JPhotoMenu.A_FULLVIEW)) {
             // list.toggleFullView();
-            startFullView();                
+            startFullView();
         }
         else if (cmd.equals(JPhotoMenu.A_SHOWEXIF)) {
             showExif();
@@ -587,7 +593,7 @@ public class JPhotoFrame extends JFrame
             else
                 JOptionPane.showMessageDialog(this, "No photos to show!",
                                               APP_NAME, JOptionPane.ERROR_MESSAGE);
-                
+
         }
         else if (cmd.equals(JPhotoMenu.A_HELP)) {
             displayHelp();
@@ -596,14 +602,14 @@ public class JPhotoFrame extends JFrame
             JOptionPane.showMessageDialog(this, APP_NAME+" v1.4.5 - Organize and Publish Your Digital Photos.\n"+
                                           "Copyright 2005-2007 Jari Karjala [www.jpkware.com],\n"
                                           +"Tarja Hakala [www.hakalat.net]"
-                                          +" and Zbynek Mužík [zbynek.muzik@email.cz]\n"
+                                          +" and Zbynek Muï¿½ï¿½k [zbynek.muzik@email.cz]\n"
                                           +"This is free software, licenced under the GNU General Public License.",
                                           JPhotoMenu.A_ABOUT, JOptionPane.INFORMATION_MESSAGE);
         }
         else if (cmd.equals(JPhotoMenu.A_BACKGROUND)) {
             Color color = Utils.showColorDialog(this, "Choose Background Color",
                                                 list.getBackground());
-            
+
             if (color != null){
                 list.setBackground(color);
                 fullViewPanel.setBackground(color);
@@ -613,7 +619,7 @@ public class JPhotoFrame extends JFrame
         else if (cmd.equals(JPhotoMenu.A_FOREGROUND)) {
             Color color = Utils.showColorDialog(this, "Choose Foreground Color",
                                                 list.getForeground());
-            
+
             if (color != null){
                 list.setForeground(color);
                 fullViewPanel.setForeground(color);
@@ -622,8 +628,7 @@ public class JPhotoFrame extends JFrame
         }
         else
             System.out.println("Not implemented: "+cmd);
-        
-        setTitle();
+        return false;
     }
 
     public void insertPhotos(String files[]) {
