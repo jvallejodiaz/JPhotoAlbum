@@ -929,7 +929,8 @@ public class JPhotoFrame extends JFrame
                 }
             }
             else {
-                JPhotoShow show = new JPhotoShow(photos, 0, list);
+                interval = 0;
+                JPhotoShow show = new JPhotoShow(photos, interval, list);
                 show.setVisible(true);
             }
         }
